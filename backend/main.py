@@ -2,6 +2,11 @@ import os
 from google import genai
 from google.genai import types
 
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")  # Set your API key in environment variables
+CLIENT = genai.Client(api_key='AIzaSyAUWuyUe5Hicxeqz_xHNFMG-kgYOd32EvY')
+MODEL = 'gemini-2.0-flash'
+SUMMARY_FILE = 'summary.txt'
+
 def prompt_gemini(prompt):
     # Sends prompt to Gemini
     try:
@@ -18,25 +23,20 @@ def prompt_pdf_gemini(prompt, pdf_client_file):
     except Exception as e:
         return f"Error generating content: {str(e)}"
 
-<<<<<<< Updated upstream
+def make_summary(lesson_file, summary_file):
+    # PDF into persistent summary file
+    prompt = "Summarize the following content into easy to follow core concepts in Spanish."
+    summary = prompt_pdf_gemini(prompt, lesson_file)
+    with open(summary_file, 'w') as f:
+        f.write(summary)
+     
 def reinforce_tutor(question, concepts):
-    """
-    Pass concepts file, tutor instruct, and student prompt
-    """
+    # Student question and returns answer
     prompt =  "You are an encouraging and kind high school level tutor. These are the concepts the student is learning.\n\n"
     prompt += concepts
     prompt += f"\n\n{question}\n\n"
     prompt +=  "Based on the student's question, can you highlight the concept that the student is struggling with and provide them with guidance. Give me the answer in Spasnish"
-
-    try:
-        response = client.models.generate_content(model=model, contents=prompt)
-        return response.text
-    except Exception as e:
-        return f"Error generating content: {str(e)}"
-
-=======
-
->>>>>>> Stashed changes
+    return prompt_gemini(prompt)
 
 # Example usage
 if __name__ == "__main__":
@@ -44,9 +44,8 @@ if __name__ == "__main__":
     if not os.path.exists(SUMMARY_FILE) or os.path.getsize(SUMMARY_FILE) == 0:
         file = CLIENT.files.upload(file='biology-student-textbook-grade-9_cell_biology.pdf')
         summary = make_summary(file, SUMMARY_FILE)
-    else:
-        summary = open(SUMMARY_FILE, "r").read()
-        print(f"{summary}")
+
+    summary = open(SUMMARY_FILE, "r").read()
 
     question1 = "What is the difference between magnification and resolution in a microscope, and why is resolution more important for seeing fine details?"
 
@@ -66,5 +65,5 @@ if __name__ == "__main__":
 
     question9 = "What adaptations help increase the efficiency of diffusion in living organisms, and why is this important?"
 
-    answer = reinforce_tutor(question1, concepts)
+    answer = reinforce_tutor(question1, summary)
     print(answer)
