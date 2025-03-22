@@ -25,7 +25,7 @@ def reinforce_tutor(question, concepts):
     prompt =  "You are an encouraging and kind high school level tutor. These are the concepts the student is learning.\n\n"
     prompt += concepts
     prompt += f"\n\n{question}\n\n"       
-    prompt +=  "Based on the student's question, can you highlight the concept that the student is struggling with and provide them with guidance."
+    prompt +=  "Based on the student's question, can you highlight the concept that the student is struggling with and provide them with guidance. Give me the answer in Spasnish"
 
     try:
         response = client.models.generate_content(model=model, contents=prompt)
@@ -33,7 +33,6 @@ def reinforce_tutor(question, concepts):
     except Exception as e:
         return f"Error generating content: {str(e)}"
     
-def 
 
 # Example usage
 if __name__ == "__main__":
