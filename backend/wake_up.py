@@ -10,13 +10,13 @@ class Lesson:
     _core_concepts = list
     summary = str
 
-    def __init__(self, folder: str, con: list) -> None:
+    def __init__(self, folder: str) -> None:
         self._folder = folder
-        # f = open(os.path.join(folder, "concepts.txt"), "r")
-        # self._core_concepts = f.readlines()
-        self._core_concepts = con
+        f = open(os.path.join(folder, "concepts.txt"), "r")
+        self._core_concepts = f.readlines()
         self.questions = {}
-        for concept in self._core_concepts:
+        for i in range(len(self._core_concepts)):
+            concept = self._core_concepts[i].strip()
             self.questions[concept] = []
 
     def generate_questions(self, concept: str) -> None:
@@ -29,6 +29,22 @@ class Lesson:
                 text += "Previous Questions: " + str(self.questions[concept])
                 response = client.models.generate_content(model=model, contents=text)
                 self.questions[concept].append(response.text)
+
+    def check_concept(self, concept: Concept) -> str:
+        for i in range(3):
+
+
+class Concept:
+    name: str
+    questions: list
+    learned: bool
+
+    def __init__(self, name: str) -> None:
+        self.name = name
+        self.learned = False
+        self.questions = []
+
+
 
 if __name__ == "__main__":
     file = client.files.upload(file='biology-student-textbook-grade-9_cell_biology.pdf')

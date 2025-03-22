@@ -18,14 +18,13 @@ def get_content(learn_file):
     except Exception as e:
         return f"Error generating content: {str(e)}"
 
-<<<<<<< Updated upstream
 def reinforce_tutor(question, concepts):
     """
     Pass concepts file, tutor instruct, and student prompt
     """
     prompt =  "You are an encouraging and kind high school level tutor. These are the concepts the student is learning.\n\n"
     prompt += concepts
-    prompt += f"\n\n{question}\n\n"       
+    prompt += f"\n\n{question}\n\n"
     prompt +=  "Based on the student's question, can you highlight the concept that the student is struggling with and provide them with guidance. Give me the answer in Spasnish"
 
     try:
@@ -33,10 +32,6 @@ def reinforce_tutor(question, concepts):
         return response.text
     except Exception as e:
         return f"Error generating content: {str(e)}"
-    
-=======
-
->>>>>>> Stashed changes
 
 # Example usage
 if __name__ == "__main__":
@@ -44,7 +39,7 @@ if __name__ == "__main__":
     concepts = get_content(file)
 
     question1 = "What is the difference between magnification and resolution in a microscope, and why is resolution more important for seeing fine details?"
-    
+
     question2 = "How does the electron microscope differ from the light microscope in terms of function and limitations?"
 
     question3 = "Why is staining necessary when using a light microscope, and how does it affect the visibility of cell structures?"
@@ -60,6 +55,6 @@ if __name__ == "__main__":
     question8 = "Why are cells considered the basic unit of life according to cell theory, and how was this theory developed?"
 
     question9 = "What adaptations help increase the efficiency of diffusion in living organisms, and why is this important?"
-    
+
     answer = reinforce_tutor(question1, concepts)
     print(answer)
