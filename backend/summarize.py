@@ -40,20 +40,21 @@ def main():
     
     genai.configure(api_key=api_key)
     model = genai.GenerativeModel('gemini-2.0-flash')
+
+    for i in range(2):
+        # Extract text from page
+        text = extract_text_from_pdf(pdf_path, i)
+        if not text:
+            return
     
-    # Extract text from PDF
-    text = extract_text_from_pdf(pdf_path, page_number)
-    if not text:
-        return
+        # Generate summary
+        summary = generate_summary(text, i, model)
+        if not summary:
+            return
     
-    # Generate summary
-    summary = generate_summary(text, page_number, model)
-    if not summary:
-        return
-    
-    # Save to file and print
-    with open(output_file, 'w') as f:
-        f.write(summary)
+        # Save to file and print
+        with open(output_file, 'a') as f:
+            f.write(summary)
     
     print(f"Summary saved to {output_file}:\n\n{summary}")
 
