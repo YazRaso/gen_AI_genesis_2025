@@ -18,6 +18,7 @@ def get_content(learn_file):
     except Exception as e:
         return f"Error generating content: {str(e)}"
 
+<<<<<<< Updated upstream
 def reinforce_tutor(question, concepts):
     """
     Pass concepts file, tutor instruct, and student prompt
@@ -33,6 +34,9 @@ def reinforce_tutor(question, concepts):
     except Exception as e:
         return f"Error generating content: {str(e)}"
     
+=======
+
+>>>>>>> Stashed changes
 
 # Example usage
 if __name__ == "__main__":
