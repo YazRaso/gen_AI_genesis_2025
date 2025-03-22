@@ -2,6 +2,7 @@ import os
 import google.generativeai as genai
 
 # Configure the API key
+# in bash: `export GEMINI_API_KEY=[key]`
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")  # Set your API key in environment variables
 genai.configure(api_key=GEMINI_API_KEY)
 
