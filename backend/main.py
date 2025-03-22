@@ -19,7 +19,7 @@ def prompt_pdf_gemini(prompt, pdf_client_file):
         return f"Error generating content: {str(e)}"
 
 def make_summary(lesson_file, summary_file):
-    prompt = "Summarize the following content into easy to follow core concepts."
+    prompt = "Summarize the following content into easy to follow core concepts in Spanish."
     summary = prompt_pdf_gemini(prompt, lesson_file)
     with open(summary_file, 'w') as f:
         f.write(summary)
@@ -51,9 +51,8 @@ if __name__ == "__main__":
     if not os.path.exists(SUMMARY_FILE) or os.path.getsize(SUMMARY_FILE) == 0:
         file = CLIENT.files.upload(file='biology-student-textbook-grade-9_cell_biology.pdf')
         summary = make_summary(file, SUMMARY_FILE)
-    else:
-        summary = open(SUMMARY_FILE, "r").read()
-        print(f"{summary}")
+
+    summary = open(SUMMARY_FILE, "r").read()
 
     question1 = "What is the difference between magnification and resolution in a microscope, and why is resolution more important for seeing fine details?"
     
