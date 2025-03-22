@@ -2,22 +2,23 @@ import os
 from google import genai
 from google.genai import types
 
-# Configure the API key
-# in bash: `export GEMINI_API_KEY=[key]`
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")  # Set your API key in environment variables
-client = genai.Client(api_key='AIzaSyAUWuyUe5Hicxeqz_xHNFMG-kgYOd32EvY')
-
-# Create the Generative Model instance
-model = 'gemini-2.0-flash'
-
-def get_content(learn_file):
-    text = "Summarize the following content into easy to follow core concepts."
+def prompt_gemini(prompt):
+    # Sends prompt to Gemini
     try:
-        response = client.models.generate_content(model=model, contents=[text, learn_file])
+        response = CLIENT.models.generate_content(model=MODEL, contents=prompt)
         return response.text
     except Exception as e:
         return f"Error generating content: {str(e)}"
 
+def prompt_pdf_gemini(prompt, pdf_client_file):
+    # Sends prompt and pdf to Gemini
+    try:
+        response = CLIENT.models.generate_content(model=MODEL, contents=[prompt, pdf_client_file])
+        return response.text
+    except Exception as e:
+        return f"Error generating content: {str(e)}"
+
+<<<<<<< Updated upstream
 def reinforce_tutor(question, concepts):
     """
     Pass concepts file, tutor instruct, and student prompt
@@ -33,10 +34,19 @@ def reinforce_tutor(question, concepts):
     except Exception as e:
         return f"Error generating content: {str(e)}"
 
+=======
+
+>>>>>>> Stashed changes
+
 # Example usage
 if __name__ == "__main__":
-    file = client.files.upload(file='biology-student-textbook-grade-9_cell_biology.pdf')
-    concepts = get_content(file)
+
+    if not os.path.exists(SUMMARY_FILE) or os.path.getsize(SUMMARY_FILE) == 0:
+        file = CLIENT.files.upload(file='biology-student-textbook-grade-9_cell_biology.pdf')
+        summary = make_summary(file, SUMMARY_FILE)
+    else:
+        summary = open(SUMMARY_FILE, "r").read()
+        print(f"{summary}")
 
     question1 = "What is the difference between magnification and resolution in a microscope, and why is resolution more important for seeing fine details?"
 
