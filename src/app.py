@@ -17,4 +17,10 @@ try:
 except Exception as e:
     raise ValueError(f"Oops, that was not supposed to happen! {e}")
 
-st.write("Hello ")
+st.write()
+language_options = ("Wixarika", "Rarámuri", "Otomí")
+st.selectbox("Select Language", language_options)
+intro = "Hola 👋 bienvenido a rAIces ☺️"
+
+# TODO: make translate function
+st.write(translate(lang=language_options, msg=intro))
