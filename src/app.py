@@ -55,16 +55,11 @@ def translate(input_lang, output_lang, text) -> str:
 
 
 
-
-
-
-
-
-st.write()
 language_options = ("Wixarika", "Rarámuri", "Otomí")
 # TODO: FIX SELECT LANGUAGE PROMPT
-st.selectbox("Select Language", language_options)
+chosen_lang = st.selectbox("Select Language", language_options)
 intro = "Hola 👋 bienvenido a rAIces ☺️"
 
 # TODO: make translate function
-st.write(translate(lang=language_options, text=intro))
+st.write(translate(input_lang="Spanish", output_lang=chosen_lang, text=intro))
+st.slider("lorem ipsum")
