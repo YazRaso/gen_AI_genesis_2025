@@ -413,7 +413,20 @@ UI_TEXTS = {
         "geography_desc": "Study of Earth, its characteristics and populations",
         "history_desc": "Past events and their impact on our cultures",
         # Subject content
-        "biology_content": markdown_text,
+        "biology_content": {
+            "title1": "Living Beings and their Classification",
+            "content1": "Living beings are those that are born, grow, reproduce and die. These organisms are composed mainly of cells, the basic unit of life.",
+            "title2": "Five Kingdoms of Nature:",
+            "list2": [
+                "Animalia: Multicellular organisms that obtain their energy by consuming other organisms",
+                "Plantae: Multicellular organisms that perform photosynthesis",
+                "Fungi: Includes fungi, yeasts and molds",
+                "Protista: Unicellular organisms with defined nucleus",
+                "Monera: Unicellular organisms without defined nucleus, such as bacteria"
+            ],
+            "title3": "Biodiversity in Our Communities",
+            "content3": "Mexico is one of the countries with the greatest biodiversity in the world. Our indigenous communities have maintained a close relationship with this biodiversity for centuries, developing deep knowledge about medicinal plants, traditional crops, and conservation practices."
+        },
         "mathematics_content": {
             "title1": "Number Systems",
             "content1": "Different cultures have developed different systems for coun"
