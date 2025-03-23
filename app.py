@@ -12,16 +12,6 @@ st.set_page_config(
 )
 
 
-def read_markdown_file(markdown_file):
-    with open(markdown_file, "r") as f:
-        markdown_text = f.read()
-    return markdown_text
-
-
-markdown_path = "./bio_lesson"
-markdown_text = read_markdown_file(markdown_path)
-
-
 def ask_question(question):
     api_key = os.environ.get("GOOGLE_API_KEY")
     if not api_key:
@@ -659,15 +649,12 @@ def subject_detail_page():
     # Content based on subject and tab
     if selected_tab == "Lessons":
         if st.session_state.selected_subject == 'biology':
-            if st.session_state.selected_language == "Wixárika":
-                st.write(markdown_text)
-            else:
-                title1 = get_ui_text("title1", "biology_content")
-                content1 = get_ui_text("content1", "biology_content")
-                title2 = get_ui_text("title2", "biology_content")
-                list2 = [get_ui_text("list2", "biology_content", i) for i in range(5)]
-                title3 = get_ui_text("title3", "biology_content")
-                content3 = get_ui_text("content3", "biology_content")
+            title1 = get_ui_text("title1", "biology_content")
+            content1 = get_ui_text("content1", "biology_content")
+            title2 = get_ui_text("title2", "biology_content")
+            list2 = [get_ui_text("list2", "biology_content", i) for i in range(5)]
+            title3 = get_ui_text("title3", "biology_content")
+            content3 = get_ui_text("content3", "biology_content")
 
             st.markdown(f'''
             <div class="subject-text">
