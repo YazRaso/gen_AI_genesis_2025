@@ -5,7 +5,7 @@ import io
 
 # Set page config
 st.set_page_config(
-    page_title="rAlces Educational App",
+    page_title="rAlces",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -127,20 +127,15 @@ def apply_custom_css():
     </style>
     """, unsafe_allow_html=True)
 
-# Function to create navigation buttons with conditional star
-def nav_button(label, key, selected=False):
+# Function to create navigation buttons without star
+def nav_button(label, key):
     button_html = f"""
-    <div class="nav-button nav-button-selected" style="position: relative;">
+    <div class="nav-button" style="position: relative;">
         {label}
-        {"<span class='blue-star'>★</span>" if selected else ""}
     </div>
     """
     return st.markdown(button_html, unsafe_allow_html=True)
 
-# Function to encode image to base64
-def get_image_base64(image_path):
-    with open(image_path, "rb") as img_file:
-        return base64.b64encode(img_file.read()).decode()
 
 # Initialize session state
 if 'tab' not in st.session_state:
@@ -165,79 +160,76 @@ def set_subject(subject_name):
 apply_custom_css()
 
 def home_page():
-    st.markdown('<div class="tabs-container">', unsafe_allow_html=True)
+    #st.markdown('<div class="tabs-container">', unsafe_allow_html=True)
     
     # Create a placeholder for the logo and header
     col1, col2 = st.columns([1, 2])
     
-    with col1:
-        pass   # TO FIX!
-        
-    with col2:
-        st.markdown('<h1 class="main-header">rAlces</h1>', unsafe_allow_html=True)
+    # Create a placeholder for the logo and header
+    st.markdown('<h1 class="main-header">rAlces</h1>', unsafe_allow_html=True)
     
     # Navigation buttons with clickable functionality
-    if st.button("WIXARIKA", key="wixarika_btn", use_container_width=True):
+    if st.button("wixárika", key="wixarika_btn", use_container_width=True):
         st.session_state.biology_selected = True
         set_tab('subjects')
     
-    if st.button("RARAMURI", key="raramuri_btn", use_container_width=True):
+    if st.button("rarámuri", key="raramuri_btn", use_container_width=True):
         set_tab('subjects')
     
-    if st.button("OTOMI", key="otomi_btn", use_container_width=True):
+    if st.button("otomí", key="otomi_btn", use_container_width=True):
         set_tab('subjects')
         
-    st.markdown('</div>', unsafe_allow_html=True)
+    #st.markdown('</div>', unsafe_allow_html=True)
 
 def subjects_page():
-    st.markdown('<div class="tabs-container">', unsafe_allow_html=True)
+    #st.markdown('<div class="tabs-container">', unsafe_allow_html=True)
     
-    st.markdown('<h1 class="main-header">Subjects</h1>', unsafe_allow_html=True)
+    st.markdown('<h1 class="main-header">temas</h1>', unsafe_allow_html=True) # subjects
     
     col1, col2 = st.columns(2)
     
     with col1:
         biology_btn = st.button(
-            "BIOLOGY", 
+            "biologia", # biology
             key="biology_btn", 
             use_container_width=True,
             help="Click to view Biology content"
         )
         if biology_btn:
-            set_subject('BIOLOGY')
+            set_subject('biologia')
             
-        math1_btn = st.button(
-            "MATH", 
-            key="math1_btn", 
+        math_btn = st.button(
+            "matematicas", # math
+            key="math_btn", 
             use_container_width=True,
             help="Click to view Math content"
         )
-        if math1_btn:
-            set_subject('MATH')
+        if math_btn:
+            set_subject('matematicas')
             
     with col2:
-        math2_btn = st.button(
-            "MATH", 
-            key="math2_btn", 
+        geography_btn = st.button(
+            "geografia", # geography
+            key="geography_btn", 
             use_container_width=True,
             help="Click to view Math content"
         )
-        if math2_btn:
-            set_subject('MATH')
+        if geography_btn:
+            set_subject('geografia')
             
-        math3_btn = st.button(
-            "MATH", 
-            key="math3_btn", 
+        history_btn = st.button(
+            "historia", # history
+            key="history_btn", 
             use_container_width=True,
             help="Click to view Math content"
         )
-        if math3_btn:
-            set_subject('MATH')
+        if history_btn:
+            set_subject('historia')
             
     st.markdown('</div>', unsafe_allow_html=True)
 
 def subject_detail_page():
-    st.markdown('<div class="tabs-container">', unsafe_allow_html=True)
+    #st.markdown('<div class="tabs-container">', unsafe_allow_html=True)
     
     st.markdown(f'<h1 class="subject-header">{st.session_state.selected_subject}</h1>', unsafe_allow_html=True)
     
@@ -262,11 +254,11 @@ def subject_detail_page():
     col1, col2 = st.columns(2)
     
     with col1:
-        if st.button("Quiz!", key="quiz_btn", use_container_width=True):
+        if st.button("examen", key="quiz_btn", use_container_width=True): # exam
             st.write("Quiz functionality will be implemented here.")
             
     with col2:
-        if st.button("Help me Tutor!", key="help_btn", use_container_width=True):
+        if st.button("ayuda tutor", key="help_btn", use_container_width=True): # help tutor
             st.write("Tutoring assistance will be provided here.")
             
     st.markdown('</div>', unsafe_allow_html=True)
@@ -275,14 +267,14 @@ def subject_detail_page():
 with st.sidebar:
     st.markdown("### Navigation")
     
-    if st.button("Home", key="nav_home"):
+    if st.button("inicio", key="nav_home"): # home
         set_tab('home')
         
-    if st.button("Subjects", key="nav_subjects"):
+    if st.button("tema", key="nav_subjects"): # tema
         set_tab('subjects')
         
     if st.session_state.selected_subject:
-        if st.button(f"{st.session_state.selected_subject} Detail", key="nav_detail"):
+        if st.button(f"{st.session_state.selected_subject} detalle", key="nav_detail"): # detail
             set_tab('subject_detail')
 
 # Display the appropriate page based on session state
