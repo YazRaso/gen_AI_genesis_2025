@@ -11,15 +11,17 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
+
 def read_markdown_file(markdown_file):
     with open(markdown_file, "r") as f:
         markdown_text = f.read()
     return markdown_text
 
-markdown_path = ".md"
+
+markdown_path = "bio_lesson_wixa(goated).md"
 
 markdown_text = read_markdown_file(markdown_path)
-st.markdown(markdown_text, unsafe_allow_html=True)
+
 
 def ask_question(question):
     api_key = os.environ.get("GOOGLE_API_KEY")
@@ -422,24 +424,7 @@ UI_TEXTS = {
         "geography_desc": "Study of Earth, its characteristics and populations",
         "history_desc": "Past events and their impact on our cultures",
         # Subject content
-        "biology_content": {
-            "title1": "Living Beings and their Classification",
-            "content1": "Living beings are those that are born, grow, reproduce"
-                        " and die. These organisms are composed mainly of cells, the basic unit of life.",
-            "title2": "Five Kingdoms of Nature:",
-            "list2": [
-                "Animalia: Multicellular organisms that obtain their energy by consuming other organisms",
-                "Plantae: Multicellular organisms that perform photosynthesis",
-                "Fungi: Includes fungi, yeasts and molds",
-                "Protista: Unicellular organisms with defined nucleus",
-                "Monera: Unicellular organisms without defined nucleus, such as bacteria"
-            ],
-            "title3": "Biodiversity in Our Communities",
-            "content3": "Mexico is one of the countries with the greatest biod"
-                        "iversity in the world. Our indigenous communities have mainta"
-                        "ined a close relationship with this biodiversity for centu"
-                        "ries, developing deep knowledge about medicinal plants, traditional crops, and conservation practices."
-        },
+        "biology_content": markdown_text,
         "mathematics_content": {
             "title1": "Number Systems",
             "content1": "Different cultures have developed different systems for coun"
@@ -675,6 +660,8 @@ def subject_detail_page():
     # Content based on subject and tab
     if selected_tab == "Lessons":
         if st.session_state.selected_subject == 'biology':
+            if st.session_state.selected_language == "Wixárika":
+                st.write(markdown_text)
             # Get translated content for biology
             title1 = get_ui_text("title1", "biology_content")
             content1 = get_ui_text("content1", "biology_content")
