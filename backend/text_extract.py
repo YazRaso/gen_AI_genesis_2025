@@ -3,11 +3,12 @@ from gemini.utils import prompt_gemini
 import time
 
 def extract_text(pdf_path, md_path):
+    language = "Raramuri"
     reader = PdfReader(pdf_path)
     with open(md_path, 'a') as f:
         for i, page in enumerate(reader.pages):
             try:
-                md_text = prompt_gemini(f"{page.extract_text()} Write this file in markdown with the titles as headers and verbosely written paragraphs in Spanish?")
+                md_text = prompt_gemini(f"{page.extract_text()} Write this file in markdown with the titles as headers and verbosely written paragraphs in {language}?")
                 f.write(md_text)
                 time.sleep(10)
             except Exception as e:

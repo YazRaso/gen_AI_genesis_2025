@@ -1,6 +1,7 @@
 import os
 from google import genai
-from text_extract import extract_text
+#from text_extract import extract_text
+from gemini.utils import prompt_gemini, prompt_pdf_gemini
 
 
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")  # Set your API key in environment variables
@@ -9,24 +10,7 @@ MODEL = 'gemini-2.0-flash'
 SUMMARY_FILE = 'summary.txt'
 MARKDOWN_FILE = 'lesson_md.md'
 
-
-def prompt_gemini(prompt):
-    # Sends prompt to Gemini
-    try:
-        response = CLIENT.models.generate_content(model=MODEL, contents=prompt)
-        return response.text
-    except Exception as e:
-        print(f"Error generating content: {str(e)}")
-
-def prompt_pdf_gemini(prompt, pdf_client_file):
-    # Sends prompt and pdf to Gemini
-    try:
-        response = CLIENT.models.generate_content(model=MODEL, contents=[prompt, pdf_client_file])
-        return response.text
-    except Exception as e:
-        print(f"Error generating content: {str(e)}")
-
-def make_summary(lesson_file, summary_file):
+def make_summary(prompt, lesson_file, summary_file):
     # PDF into persistent summary file
     prompt = "Summarize the following content into easy to follow core concepts in Spanish."
     summary = prompt_pdf_gemini(prompt, lesson_file)
@@ -35,7 +19,7 @@ def make_summary(lesson_file, summary_file):
 
 def make_lesson_md(lesson_file, lesson_md_file):
     # PDF into persistent summary file
-    prompt = "Convert PDF to markdown."
+    prompt = "Translate this to Spanish."
     lesson_md = prompt_pdf_gemini(prompt, lesson_file)
     with open(lesson_md_file, 'w') as f:
         f.write(lesson_md)
@@ -58,6 +42,7 @@ def main():
     print(markdown)
     return"""
 
+    # TODO: Find way to convert PDF to lesson in student language
     if not os.path.exists(MARKDOWN_FILE) or os.path.getsize(MARKDOWN_FILE) == 0:
         file = CLIENT.files.upload(file='biology-student-textbook-grade-9_cell_biology.pdf')
         make_lesson_md(file, MARKDOWN_FILE)
