@@ -1,5 +1,3 @@
-from zipfile._path import Translator
-
 import streamlit as st
 from transformers import MT5ForConditionalGeneration, MT5Tokenizer
 import torch
