@@ -544,7 +544,7 @@ def home_page():
     # Footer
     footer_text = cached_translate(
         st.session_state.selected_language,
-        "© 2025 TAR - Inclusive Education"
+        "© 2025 TAI - Inclusive Education"
     )
     st.markdown(f'<div class="footer">{footer_text}</div>', unsafe_allow_html=True)
 
