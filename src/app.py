@@ -2,7 +2,7 @@ import streamlit as st
 import google.generativeai as genai
 import os
 from dotenv import load_dotenv
-
+from tutor import Tutor
 # Load environment variables from .env file
 load_dotenv()
 
@@ -12,6 +12,9 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="collapsed"
 )
+
+st.session_state.tutor = Tutor(summary_path='summary.txt', concepts_path='concepts.txt',
+                               document_path=st.session_state.document, language=st.session_state.language)
 
 
 def translate(output_lang=None, text="") -> str:
@@ -43,7 +46,7 @@ def translate(output_lang=None, text="") -> str:
         prompt = f"Translate the following text to {output_lang}. Return only the translated text without explanations or quotation marks: {text}"
 
         # Initialize the model
-        model = genai.GenerativeModel('gemini-pro')
+        model = genai.GenerativeModel('gemini-2.0-flash')
 
         # Generate the translation
         response = model.generate_content(prompt)
@@ -680,19 +683,19 @@ def subject_detail_page():
 
     # Action buttons
     take_exam_text = get_ui_text("take_exam")
-    request_help_text = get_ui_text("request_help")
-    exam_coming_soon = get_ui_text("exam_coming_soon")
-    tutor_coming_soon = get_ui_text("tutor_coming_soon")
+    tutor = get_ui_text("get help from tutor")
 
     col1, col2 = st.columns(2)
 
     with col1:
         if st.button(take_exam_text, key="quiz_btn", use_container_width=True):
-            st.info(exam_coming_soon)
+            st.session_state.tutor.make_quiz()
+            st.session_state.tutor.get_quiz_questions()
 
     with col2:
-        if st.button(request_help_text, key="help_btn", use_container_width=True):
-            st.info(tutor_coming_soon)
+        if st.button(tutor, key="help_btn", use_container_width=True):
+            question = st.text_input("")
+            st.session_state.tutor.user_question(question)
 
     # Footer
     footer_text = cached_translate(
