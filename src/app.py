@@ -1,3 +1,5 @@
+from glob import translate
+
 import streamlit as st
 from transformers import MT5ForConditionalGeneration, MT5Tokenizer
 import torch
@@ -31,8 +33,10 @@ LANGUAGE_CODES = {
 produces the translated text from input_lang to output_lang
 """
 
-
-def translate(input_lang, output_lang, text) -> str:
+def translate(input_lang="Spanish", output_lang=None, text="") -> str:
+    # This way we only give output_lang if we want something other than the user's language
+    if output_lang is None:
+        output_lang = input_lang
 
     lang1 = LANGUAGE_CODES.get(input_lang)
     lang2 = LANGUAGE_CODES.get(output_lang)
@@ -52,8 +56,9 @@ def translate(input_lang, output_lang, text) -> str:
 
 language_options = ("Wixarika", "Rarámuri", "Otomí")
 # TODO: FIX SELECT LANGUAGE PROMPT
-chosen_lang = st.selectbox("Select Language", language_options)
 intro = "Hola 👋 bienvenido a rAIces ☺️"
+chosen_lang = st.selectbox(intro, language_options)
+
 
 # Subjects
 bio = "Biología🧬"
@@ -62,8 +67,9 @@ math = "matemáticas🧮"
 physics = "física⚙️"
 subjects = [bio, chem, math, physics]
 for index, subject in enumerate(subjects):
-    subjects[index] = translate(input_lang="Spanish", output_lang=chosen_lang, text=subject)
+    subjects[index] = translate(text=subject)
 
-subject = st.selectbox("Select Subject", subjects)
-st.header(translate(input_lang="Spanish", output_lang=chosen_lang, text=intro))
+subject_select_prompt = translate(text="¿Qué te gustaría aprender hoy?")
+subject = st.selectbox(subject_select_prompt, subjects)
+st.header(translate(text=intro))
 st.subheader(translate)
