@@ -26,6 +26,6 @@ def make_persistent(prompt, input_path, output_path):
     if not os.path.exists(output_path) or os.path.getsize(output_path) == 0:
         in_file = CLIENT.files.upload(file=input_path)
         output = prompt_pdf_gemini(prompt, in_file)
-        with open(output_path, 'w') as f:
+        with open(output_path, 'w', encoding='utf-8') as f:
             f.write(output)
     return output_path
