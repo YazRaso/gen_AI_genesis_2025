@@ -24,7 +24,6 @@ LANGUAGE_CODES = {
     "Rarámuri": "tar",
     "Otomí": "oto",
     "Spanish": "es",
-    "English": "en"
 }
 
 
