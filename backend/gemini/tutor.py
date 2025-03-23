@@ -44,6 +44,16 @@ class Tutor:
         print(str(len(q.questions) - len(q.wrong_ques)) + " out of " + str(len(q.questions)) + " questions correct.")
         print("Grade: " + str(grade))
 
+    def make_quiz(self):
+        self.quiz = Quiz(self.concepts)
+
+    def get_quiz_questions(self, num=5):
+        return self.quiz.choose_ques(num)
+
+    def check_quiz_answers(self, answers):
+        return self.quiz.check_answers(answers) 
+    
+
     def print_summary(self):
         # Prints summary file to verify its existance
         if os.path.exists(self.summary_path):
