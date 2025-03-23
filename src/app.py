@@ -50,13 +50,20 @@ def translate(input_lang, output_lang, text) -> str:
     return translated_text
 
 
-
-
 language_options = ("Wixarika", "Rarámuri", "Otomí")
 # TODO: FIX SELECT LANGUAGE PROMPT
 chosen_lang = st.selectbox("Select Language", language_options)
 intro = "Hola 👋 bienvenido a rAIces ☺️"
 
-# TODO: make translate function
-st.write(translate(input_lang="Spanish", output_lang=chosen_lang, text=intro))
-st.slider("lorem ipsum")
+# Subjects
+bio = "Biología🧬"
+chem = "química🧪"
+math = "matemáticas🧮"
+physics = "física⚙️"
+subjects = [bio, chem, math, physics]
+for index, subject in enumerate(subjects):
+    subjects[index] = translate(input_lang="Spanish", output_lang=chosen_lang, text=subject)
+
+subject = st.selectbox("Select Subject", subjects)
+st.header(translate(input_lang="Spanish", output_lang=chosen_lang, text=intro))
+st.subheader(translate)
