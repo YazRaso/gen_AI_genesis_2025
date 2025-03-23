@@ -18,7 +18,7 @@ def read_markdown_file(markdown_file):
     return markdown_text
 
 
-markdown_path = "../bio_lesson_wixa(goated).md"
+markdown_path = "/Users/yazraso/gen_AI_genesis_2025/src/bio_lesson_wixa(goated).md"
 
 markdown_text = read_markdown_file(markdown_path)
 
