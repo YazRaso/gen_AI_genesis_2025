@@ -1,28 +1,42 @@
 import os
 from google import genai
-from google.genai import types
-    
+from text_extract import extract_text
+
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")  # Set your API key in environment variables
+CLIENT = genai.Client(api_key='AIzaSyAUWuyUe5Hicxeqz_xHNFMG-kgYOd32EvY')
+MODEL = 'gemini-2.0-flash'
+SUMMARY_FILE = 'summary.txt'
+MARKDOWN_FILE = 'lesson_md.md'
+
 def prompt_gemini(prompt):
     # Sends prompt to Gemini
     try:
         response = CLIENT.models.generate_content(model=MODEL, contents=prompt)
         return response.text
     except Exception as e:
-        return f"Error generating content: {str(e)}"
-    
+        print(f"Error generating content: {str(e)}")
+
 def prompt_pdf_gemini(prompt, pdf_client_file):
     # Sends prompt and pdf to Gemini
     try:
         response = CLIENT.models.generate_content(model=MODEL, contents=[prompt, pdf_client_file])
         return response.text
     except Exception as e:
-        return f"Error generating content: {str(e)}"
+        print(f"Error generating content: {str(e)}")
 
 def make_summary(lesson_file, summary_file):
     prompt = "Summarize the following content into easy to follow core concepts in Spanish."
     summary = prompt_pdf_gemini(prompt, lesson_file)
     with open(summary_file, 'w') as f:
         f.write(summary)
+
+def make_lesson_md(lesson_file, lesson_md_file):
+    # PDF into persistent summary file
+    prompt = "Convert PDF to markdown."
+    lesson_md = prompt_pdf_gemini(prompt, lesson_file)
+    with open(lesson_md_file, 'w') as f:
+        f.write(lesson_md)
+
      
 
 def reinforce_tutor(question, concepts):
@@ -35,24 +49,20 @@ def reinforce_tutor(question, concepts):
     prompt +=  "Based on the student's question, can you highlight the concept that the student is struggling with and provide them with guidance. Give me the answer in Spasnish only"
     return prompt_gemini(prompt)
 
-
-# Configure the API key
-# in bash: `export GEMINI_API_KEY=[key]`
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")  # Set your API key in environment variables
-CLIENT = genai.Client(api_key=GEMINI_API_KEY)
-
-# Create the Generative Model instance
-MODEL = 'gemini-2.0-flash'
-SUMMARY_FILE="summary.txt"
-
-# Example usage
-if __name__ == "__main__":
-
-    if not os.path.exists(SUMMARY_FILE) or os.path.getsize(SUMMARY_FILE) == 0:
+def main():
+    """if not os.path.exists(MARKDOWN_FILE) or os.path.getsize(SUMMARY_FILE) == 0:
         file = CLIENT.files.upload(file='biology-student-textbook-grade-9_cell_biology.pdf')
-        summary = make_summary(file, SUMMARY_FILE)
+        make_lesson_md(file, MARKDOWN_FILE)
 
-    summary = open(SUMMARY_FILE, "r").read()
+    markdown = open(MARKDOWN_FILE, "r").read()
+    print(markdown)
+    return"""
+
+    if not os.path.exists(MARKDOWN_FILE) or os.path.getsize(MARKDOWN_FILE) == 0:
+        file = CLIENT.files.upload(file='biology-student-textbook-grade-9_cell_biology.pdf')
+        make_lesson_md(file, MARKDOWN_FILE)
+
+    summary = open(MARKDOWN_FILE, "r").read()
 
     question1 = "What is the difference between magnification and resolution in a microscope, and why is resolution more important for seeing fine details?"
     
@@ -74,3 +84,11 @@ if __name__ == "__main__":
 
     answer = reinforce_tutor(question1, summary)
     print(answer)
+
+
+
+# Example usage
+if __name__ == "__main__":
+    main()
+
+
