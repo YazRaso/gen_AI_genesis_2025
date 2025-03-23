@@ -40,6 +40,7 @@ class Tutor:
         for index in q.wrong_ques:
             print(q.questions[index] + ":\n")
             print(q.wrong_ques[index] + "\n\n")
+
         print(str(len(q.questions) - len(q.wrong_ques)) + " out of " + str(len(q.questions)) + " questions correct.")
         print("Grade: " + str(grade))
 

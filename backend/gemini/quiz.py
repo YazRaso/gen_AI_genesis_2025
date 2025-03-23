@@ -1,36 +1,35 @@
+from random import randrange
+
 class Quiz:
-    concepts: []
-    questions: list[str]
-    wrong_ques: dict[int: str]
+    concepts: list
+    used_cons: list
 
     def __init__(self, cons) -> None:
-        self.failed_cons = []
-        self.wrong_ques = {}
-        self.questions = []
         self.concepts = cons
         for concept in self.concepts:
             concept.generate_questions()
-        for concept in self.concepts:
-            self.questions.extend(concept.questions)
 
-    def quiz_user(self) -> None:
-        for i in range(len(self.concepts)):
-            concept = self.concepts[i]
-            if not concept.learned:
-                outcome = concept.check_concept()
-                if len(outcome) != 0:
-                    self.failed_cons.append(concept)
-                    for j in range(len(outcome)):
-                        self.wrong_ques[i * 3 + outcome[j][0]] = outcome[j][1]
-                        # For testing
-                        # print(outcome[j][1])
+    def choose_ques(self, num: int) -> list:
+        self.used_cons = []
+        i = 0
+        while i < num:
+            curr_con = self.concepts[randrange(len(self.concepts))]
+            if curr_con not in self.used_cons:
+                self.used_cons.append(curr_con)
+                i += 1
 
-# For testing
-if __name__ == "__main__":
-    q = Quiz()
-    q.quiz_user()
-    print(q.wrong_ques)
-    print(q.failed_cons)
+        ques = []
+        for concept in self.used_cons:
+            ques.extend(concept.questions)
+        return ques
+
+    def check_answers(self, answers: list) -> list:
+        feedback = []
+        for ans in range(len(answers) // 3):
+            cons_answers = [answers[ans * 3], answers[ans * 3 + 1], answers[ans * 3 + 2]]
+            for i in range(3):
+                feedback.append(self.used_cons[ans].check_answer(i, cons_answers[i]))
+        return feedback
 
 
 
