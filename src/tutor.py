@@ -20,12 +20,15 @@ class Tutor:
         self.concepts_path = make_persistent(concepts_prompt, document_path, concepts_path)
         self.concepts = []
 
-        # Create a list of the concepts
-        with open(concepts_path, "r") as f:
-            con_names = f.readlines()
-            for i in range(len(con_names)):
-                con_names[i].strip()
-                self.concepts.append(Concept(con_names[i], self.summary_path))
+        try:
+            with open(self.concepts_path, "r") as f:
+                con_names = f.readlines()
+                for i in range(len(con_names)):
+                    con_names[i] = con_names[i].strip()
+                    self.concepts.append(Concept(con_names[i], self.summary_path))
+        except FileNotFoundError:
+            print(f"Error: Concepts file not found at {self.concepts_path}")
+            self.concepts = []
 
     def user_question(self, question_prompt):
         # Asks tutor agent a clarification question in helper mode
@@ -39,18 +42,18 @@ class Tutor:
         return self.quiz.choose_ques(num)
 
     def check_quiz_answers(self, answers):
-        return self.quiz.check_answers(answers) 
+        return self.quiz.check_answers(answers)
 
     def print_summary(self):
-        if os.path.exists(self.summary_path):
+        try:
             with open(self.summary_path, 'r') as f:
                 print(f.read())
-        else:
-            print("Unable to find summary file!")
+        except FileNotFoundError:
+            print(f"Error: Summary file not found at {self.summary_path}")
 
     def print_concepts(self):
-        if os.path.exists(self.concepts_path):
+        try:
             with open(self.concepts_path, 'r') as f:
                 print(f.read())
-        else:
-            print("Unable to find concepts file!")
+        except FileNotFoundError:
+            print(f"Error: Concepts file not found at {self.concepts_path}")

@@ -1,3 +1,5 @@
+import tempfile
+
 import streamlit as st
 import google.generativeai as genai
 import os
@@ -13,8 +15,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-st.session_state.tutor = Tutor(summary_path='summary.txt', concepts_path='concepts.txt',
-                               document_path=st.session_state.document, language=st.session_state.language)
+
 
 
 def translate(output_lang=None, text="") -> str:
@@ -377,7 +378,12 @@ def get_ui_text(key, section=None, index=None):
     if lang not in UI_TEXTS:
         # Base on English text
         if section and index is not None:
-            text = UI_TEXTS["English"][section][index]
+            # Check if the item is a list
+            if isinstance(UI_TEXTS["English"][section][key], list):
+                text = UI_TEXTS["English"][section][key][index]
+            else:
+                # Handle non-list case
+                text = UI_TEXTS["English"][section][key]
         elif section:
             text = UI_TEXTS["English"][section]
         else:
@@ -388,12 +394,16 @@ def get_ui_text(key, section=None, index=None):
 
     # Return from pre-translated texts
     if section and index is not None:
-        return UI_TEXTS[lang][section][index]
+        # Check if the item is a list
+        if isinstance(UI_TEXTS[lang][section][key], list):
+            return UI_TEXTS[lang][section][key][index]
+        else:
+            # Handle non-list case
+            return UI_TEXTS[lang][section][key]
     elif section:
         return UI_TEXTS[lang][section]
     else:
         return UI_TEXTS[lang][key]
-
 
 def home_page():
     # Logo and header
@@ -681,9 +691,32 @@ def subject_detail_page():
         </div>
         ''', unsafe_allow_html=True)
 
-    # Action buttons
+    # In the subject_detail_page() function, add a file uploader
     take_exam_text = get_ui_text("take_exam")
-    tutor = get_ui_text("get help from tutor")
+    request_help_text = get_ui_text("request_help")
+
+    uploaded_file = st.file_uploader("Upload a PDF document", type="pdf")
+
+    if uploaded_file is not None:
+        # Process the uploaded file
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as tmp_file:
+            tmp_file.write(uploaded_file.getvalue())
+            pdf_path = tmp_file.name
+
+        # Initialize the tutor
+        try:
+            st.session_state.tutor = Tutor(
+                summary_path='summary.txt',
+                concepts_path='concepts.txt',
+                document_path=pdf_path,
+                language=st.session_state.selected_language or "English"
+            )
+            st.success("Tutor initialized successfully!")
+        except Exception as e:
+            st.error(f"Error initializing tutor: {str(e)}")
+
+    else:
+        st.warning("Please upload a PDF document to use the tutor features")
 
     col1, col2 = st.columns(2)
 
@@ -693,7 +726,7 @@ def subject_detail_page():
             st.session_state.tutor.get_quiz_questions()
 
     with col2:
-        if st.button(tutor, key="help_btn", use_container_width=True):
+        if st.button(request_help_text, key="help_btn", use_container_width=True):
             question = st.text_input("")
             st.session_state.tutor.user_question(question)
 
