@@ -1,19 +1,14 @@
 import os
 from google import genai
-<<<<<<< HEAD
 from text_extract import extract_text
-=======
-from google.genai import types
->>>>>>> 40420198bb0fe2df3fba2e66d23bbbebabeae7de
+
 
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")  # Set your API key in environment variables
 CLIENT = genai.Client(api_key='AIzaSyAUWuyUe5Hicxeqz_xHNFMG-kgYOd32EvY')
 MODEL = 'gemini-2.0-flash'
 SUMMARY_FILE = 'summary.txt'
-<<<<<<< HEAD
 MARKDOWN_FILE = 'lesson_md.md'
-=======
->>>>>>> 40420198bb0fe2df3fba2e66d23bbbebabeae7de
+
 
 def prompt_gemini(prompt):
     # Sends prompt to Gemini
@@ -21,11 +16,7 @@ def prompt_gemini(prompt):
         response = CLIENT.models.generate_content(model=MODEL, contents=prompt)
         return response.text
     except Exception as e:
-<<<<<<< HEAD
         print(f"Error generating content: {str(e)}")
-=======
-        return f"Error generating content: {str(e)}"
->>>>>>> 40420198bb0fe2df3fba2e66d23bbbebabeae7de
 
 def prompt_pdf_gemini(prompt, pdf_client_file):
     # Sends prompt and pdf to Gemini
@@ -36,10 +27,7 @@ def prompt_pdf_gemini(prompt, pdf_client_file):
         print(f"Error generating content: {str(e)}")
 
 def make_summary(lesson_file, summary_file):
-<<<<<<< HEAD
-=======
     # PDF into persistent summary file
->>>>>>> 40420198bb0fe2df3fba2e66d23bbbebabeae7de
     prompt = "Summarize the following content into easy to follow core concepts in Spanish."
     summary = prompt_pdf_gemini(prompt, lesson_file)
     with open(summary_file, 'w') as f:
@@ -61,7 +49,6 @@ def reinforce_tutor(question, concepts):
     prompt +=  "Based on the student's question, can you highlight the concept that the student is struggling with and provide them with guidance. Give me the answer in Spasnish"
     return prompt_gemini(prompt)
 
-<<<<<<< HEAD
 def main():
     """if not os.path.exists(MARKDOWN_FILE) or os.path.getsize(SUMMARY_FILE) == 0:
         file = CLIENT.files.upload(file='biology-student-textbook-grade-9_cell_biology.pdf')
@@ -76,16 +63,6 @@ def main():
         make_lesson_md(file, MARKDOWN_FILE)
 
     summary = open(MARKDOWN_FILE, "r").read()
-=======
-# Example usage
-if __name__ == "__main__":
-
-    if not os.path.exists(SUMMARY_FILE) or os.path.getsize(SUMMARY_FILE) == 0:
-        file = CLIENT.files.upload(file='biology-student-textbook-grade-9_cell_biology.pdf')
-        summary = make_summary(file, SUMMARY_FILE)
-
-    summary = open(SUMMARY_FILE, "r").read()
->>>>>>> 40420198bb0fe2df3fba2e66d23bbbebabeae7de
 
     question1 = "What is the difference between magnification and resolution in a microscope, and why is resolution more important for seeing fine details?"
 
