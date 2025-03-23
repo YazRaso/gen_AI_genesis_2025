@@ -661,13 +661,13 @@ def subject_detail_page():
         if st.session_state.selected_subject == 'biology':
             if st.session_state.selected_language == "Wixárika":
                 st.write(markdown_text)
-            # Get translated content for biology
-            title1 = get_ui_text("title1", "biology_content")
-            content1 = get_ui_text("content1", "biology_content")
-            title2 = get_ui_text("title2", "biology_content")
-            list2 = [get_ui_text("list2", "biology_content", i) for i in range(5)]
-            title3 = get_ui_text("title3", "biology_content")
-            content3 = get_ui_text("content3", "biology_content")
+            else:
+                title1 = get_ui_text("title1", "biology_content")
+                content1 = get_ui_text("content1", "biology_content")
+                title2 = get_ui_text("title2", "biology_content")
+                list2 = [get_ui_text("list2", "biology_content", i) for i in range(5)]
+                title3 = get_ui_text("title3", "biology_content")
+                content3 = get_ui_text("content3", "biology_content")
 
             st.markdown(f'''
             <div class="subject-text">
