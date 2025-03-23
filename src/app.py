@@ -1,20 +1,110 @@
-import tempfile
-
 import streamlit as st
 import google.generativeai as genai
 import os
 from dotenv import load_dotenv
-from tutor import Tutor
-# Load environment variables from .env file
 load_dotenv()
 
 # Set page config
 st.set_page_config(
-    page_title="rAlces - Indigenous Learning",
+    page_title="TAI - Indigenous Learning",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
 
+def read_markdown_file(markdown_file):
+    with open(markdown_file, "r") as f:
+        markdown_text = f.read()
+    return markdown_text
+
+markdown_path = ".md"
+
+markdown_text = read_markdown_file(markdown_path)
+st.markdown(markdown_text, unsafe_allow_html=True)
+
+def ask_question(question):
+    api_key = os.environ.get("GOOGLE_API_KEY")
+    if not api_key:
+        st.warning("Missing Google API Key. Please add GOOGLE_API_KEY to your .env file.")
+        return
+
+    # Ensure session state exists for question response
+    if "question_response" not in st.session_state:
+        st.session_state["question_response"] = ""
+
+    # Configure the Gemini API
+    genai.configure(api_key=api_key)
+    model = genai.GenerativeModel('gemini-2.0-flash')
+
+    # Generate prompt
+    prompt = (f"Answer the following question about {st.session_state.selected_subject} solely "
+              f"in {st.session_state.selected_language}, {question} NO ENGLISH WHATSOEVER")
+
+    # Generate response only when the button is clicked
+    if st.button("Ask"):
+        response = model.generate_content(prompt)
+        st.session_state["question_response"] = response.text.strip()  # Store response persistently
+
+    # Display response if it exists
+    if st.session_state["question_response"]:
+        st.write(st.session_state["question_response"])
+
+
+def update_answer(index):
+    st.session_state.answers[index] = st.session_state[f"answer{index+1}"]
+
+
+def take_exam_text():
+    # Ensure session state for answers exists
+    if "answers" not in st.session_state:
+        st.session_state.answers = ["", "", ""]
+
+    # Ensure session state for questions exists
+    if "questions" not in st.session_state:
+        st.session_state.questions = []
+
+    # Ensure session state for feedback exists
+    if "feedback_response" not in st.session_state:
+        st.session_state.feedback_response = ""
+
+    api_key = os.environ.get("GOOGLE_API_KEY")
+    if not api_key:
+        st.warning("Missing Google API Key. Please add GOOGLE_API_KEY to your .env file.")
+        return
+
+    genai.configure(api_key=api_key)
+    model = genai.GenerativeModel('gemini-2.0-flash')
+
+    # Generate questions only if they haven't been generated yet
+    if not st.session_state.questions:
+        prompt = (f"Ask three questions about {st.session_state.selected_subject} in "
+                  f"{st.session_state.selected_language} NO ENGLISH WHATSOEVER")
+        response = model.generate_content(prompt)
+        prompt_response = response.text.strip()
+        st.session_state.questions = prompt_response.split("\n")  # Assuming questions are separated by newlines
+        st.write(f"TAI says: {prompt_response}")
+
+    # Display questions from session state
+    for i, question in enumerate(st.session_state.questions):
+        st.write(f"Question {i+1}: {question}")
+
+    # Create persistent text inputs and update session state
+    st.session_state.answers[0] = st.text_input("1.", value=st.session_state.answers[0], key="answer1",
+                                                on_change=lambda: update_answer(0))
+    st.session_state.answers[1] = st.text_input("2.", value=st.session_state.answers[1], key="answer2",
+                                                on_change=lambda: update_answer(1))
+    st.session_state.answers[2] = st.text_input("3.", value=st.session_state.answers[2], key="answer3",
+                                                on_change=lambda: update_answer(2))
+
+    if st.button(label="✅", key="submit_answers"):
+        prompt_to_give = (f"Examine the following answers {st.session_state.answers} to the question, "
+                          f"give feedback only in {st.session_state.selected_language} NO ENGLISH WHATSOEVER")
+
+        response = model.generate_content(prompt_to_give)
+        st.session_state.feedback_response = response.text.strip()  # Store response in session state
+
+    # Display feedback if it exists
+    if st.session_state.feedback_response:
+        st.write(st.session_state.feedback_response)
 
 
 
@@ -44,7 +134,8 @@ def translate(output_lang=None, text="") -> str:
 
     try:
         # Create a prompt for translation
-        prompt = f"Translate the following text to {output_lang}. Return only the translated text without explanations or quotation marks: {text}"
+        prompt = (f"Translate the following text to {output_lang}. Return "
+                  f"only the translated text without explanations or quotation marks: {text} NO ENGLISH WHATSOEVER")
 
         # Initialize the model
         model = genai.GenerativeModel('gemini-2.0-flash')
@@ -309,8 +400,11 @@ UI_TEXTS = {
         "request_help": "🙋 Request Tutor Help",
         "exam_coming_soon": "The evaluation system will be available soon.",
         "tutor_coming_soon": "The personalized tutoring function will be available soon.",
-        "about_ralces": "About rAlces",
-        "ralces_description": "rAlces is an educational platform designed to support the learning of students from indigenous communities, respecting and preserving their languages and cultures while facilitating access to quality education.",
+        "about_TAI": "About TAI",
+        "TAI_description": "TAI is an educational platform designed to support the lear"
+                              "ning of students from indigenous communities, respecting an"
+                              "d preserving their languages and cultures while facilitati"
+                              "ng access to quality education.",
         "select_language": "Select your language",
         "home": "🏠 Home",
         "topics": "📚 Topics",
@@ -330,7 +424,8 @@ UI_TEXTS = {
         # Subject content
         "biology_content": {
             "title1": "Living Beings and their Classification",
-            "content1": "Living beings are those that are born, grow, reproduce and die. These organisms are composed mainly of cells, the basic unit of life.",
+            "content1": "Living beings are those that are born, grow, reproduce"
+                        " and die. These organisms are composed mainly of cells, the basic unit of life.",
             "title2": "Five Kingdoms of Nature:",
             "list2": [
                 "Animalia: Multicellular organisms that obtain their energy by consuming other organisms",
@@ -340,11 +435,15 @@ UI_TEXTS = {
                 "Monera: Unicellular organisms without defined nucleus, such as bacteria"
             ],
             "title3": "Biodiversity in Our Communities",
-            "content3": "Mexico is one of the countries with the greatest biodiversity in the world. Our indigenous communities have maintained a close relationship with this biodiversity for centuries, developing deep knowledge about medicinal plants, traditional crops, and conservation practices."
+            "content3": "Mexico is one of the countries with the greatest biod"
+                        "iversity in the world. Our indigenous communities have mainta"
+                        "ined a close relationship with this biodiversity for centu"
+                        "ries, developing deep knowledge about medicinal plants, traditional crops, and conservation practices."
         },
         "mathematics_content": {
             "title1": "Number Systems",
-            "content1": "Different cultures have developed different systems for counting and representing quantities. Today we will study the decimal system and compare it with traditional systems.",
+            "content1": "Different cultures have developed different systems for coun"
+                        "ting and representing quantities. Today we will study the decimal system and compare it with traditional systems.",
             "title2": "Basic Operations:",
             "list2": [
                 "Addition (+): Combines two or more quantities to obtain a total",
@@ -405,6 +504,7 @@ def get_ui_text(key, section=None, index=None):
     else:
         return UI_TEXTS[lang][key]
 
+
 def home_page():
     # Logo and header
     st.markdown('<h1 class="main-header">rAlces</h1>', unsafe_allow_html=True)
@@ -442,17 +542,17 @@ def home_page():
             set_language('Otomí')
 
     # About section
-    about_ralces_text = get_ui_text("about_ralces")
-    ralces_description = get_ui_text("ralces_description")
+    about_TAI_text = get_ui_text("about_TAI")
+    TAI_description = get_ui_text("TAI_description")
 
     st.markdown(
-        f'<h3 style="text-align:center; font-size:26px; margin-top:60px; color:#FF8C55;">{about_ralces_text}</h3>',
+        f'<h3 style="text-align:center; font-size:26px; margin-top:60px; color:#FF8C55;">{about_TAI_text}</h3>',
         unsafe_allow_html=True
     )
 
     st.markdown(f'''
     <p style="text-align:center; font-size:18px; margin:20px 40px;">
-    {ralces_description}
+    {TAI_description}
     </p>
     ''', unsafe_allow_html=True)
 
@@ -691,96 +791,30 @@ def subject_detail_page():
         </div>
         ''', unsafe_allow_html=True)
 
-    # In the subject_detail_page() function, add a file uploader
-    take_exam_text = get_ui_text("take_exam")
-    request_help_text = get_ui_text("request_help")
-
-    uploaded_file = st.file_uploader("Upload a PDF document", type="pdf")
-
-    if uploaded_file is not None:
-        # Process the uploaded file
-        with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as tmp_file:
-            tmp_file.write(uploaded_file.getvalue())
-            pdf_path = tmp_file.name
-
-        # Initialize the tutor
-        try:
-            st.session_state.tutor = Tutor(
-                summary_path='summary.txt',
-                concepts_path='concepts.txt',
-                document_path=pdf_path,
-                language=st.session_state.selected_language or "English"
-            )
-            st.success("Tutor initialized successfully!")
-        except Exception as e:
-            st.error(f"Error initializing tutor: {str(e)}")
-
-    else:
-        st.warning("Please upload a PDF document to use the tutor features")
-
-    col1, col2 = st.columns(2)
-
-    with col1:
-        if st.button(take_exam_text, key="quiz_btn", use_container_width=True):
-            st.session_state.tutor.make_quiz()
-            st.session_state.tutor.get_quiz_questions()
-
-    with col2:
-        if st.button(request_help_text, key="help_btn", use_container_width=True):
-            question = st.text_input("")
-            st.session_state.tutor.user_question(question)
-
     # Footer
     footer_text = cached_translate(
         st.session_state.selected_language,
-        "© 2025 rAlces - Inclusive Education"
+        "© 2025 TAI - Inclusive Education"
     )
     st.markdown(f'<div class="footer">{footer_text}</div>', unsafe_allow_html=True)
 
+    # Move columns to the bottom
+    col1, col2 = st.columns(2)
+    with col1:
+        take_etext = get_ui_text("take_exam")
+        if st.button(take_etext, key="quiz_btn", use_container_width=True):
+            exam_response = take_exam_text()
+            if exam_response:
+                response_label = translate(st.session_state.selected_language, exam_response)
+                st.write(response_label)
 
-# Sidebar navigation
-with st.sidebar:
-    navigation_text = get_ui_text("navigation")
-    home_text = get_ui_text("home")
-    topics_text = get_ui_text("topics")
-    language_text = get_ui_text("language")
-    help_text = get_ui_text("help")
-    help_description = get_ui_text("help_description")
-    help_options = [get_ui_text("help_options", index=i) for i in range(3)]
-
-    st.markdown(f"<h3 style='text-align: center; color: #FF8C55;'>{navigation_text}</h3>", unsafe_allow_html=True)
-
-    if st.button(home_text, key="nav_home", use_container_width=True):
-        set_tab('home')
-
-    if st.button(topics_text, key="nav_subjects", use_container_width=True):
-        set_tab('subjects')
-
-    if st.session_state.selected_language:
-        st.markdown(f"<p style='margin-top: 20px;'>{language_text}: <b>{st.session_state.selected_language}</b></p>",
-                    unsafe_allow_html=True)
-
-    if st.session_state.selected_subject:
-        icon = SUBJECT_ICONS.get(st.session_state.selected_subject.lower(), '📚')
-        subject_name = st.session_state.selected_subject.capitalize()
-        translated_subject = cached_translate(st.session_state.selected_language, subject_name)
-
-        if st.button(f"{icon} {translated_subject}", key="nav_detail", use_container_width=True):
-            set_tab('subject_detail')
-
-    # Help section in sidebar
-    st.markdown("<hr>", unsafe_allow_html=True)
-    st.markdown(f"<h4 style='text-align: center; color: #FF8C55;'>{help_text}</h4>", unsafe_allow_html=True)
-    st.markdown(f'''
-    <p style="font-size: 14px;">
-    {help_description}
-    <ul>
-        <li>{help_options[0]}</li>
-        <li>{help_options[1]}</li>
-        <li>{help_options[2]}</li>
-    </ul>
-    </p>
-    ''', unsafe_allow_html=True)
+    with col2:
+        request_help_text = get_ui_text("request_help")
+        if st.button(request_help_text, key="help_btn", use_container_width=True):
+            question_label = translate(st.session_state.selected_language, "What is your question?")
+            question = st.text_input(question_label, key="question_input")
+            if question:
+                ask_question(question=question)
 
 # Display the appropriate page based on session state
 if st.session_state.tab == 'home':
