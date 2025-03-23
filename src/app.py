@@ -492,7 +492,7 @@ def get_ui_text(key, section=None, index=None):
 
 def home_page():
     # Logo and header
-    st.markdown('<h1 class="main-header">rAlces</h1>', unsafe_allow_html=True)
+    st.markdown('<h1 class="main-header">TAI</h1>', unsafe_allow_html=True)
 
     # Subtitle - Learning Platform
     learning_platform_text = cached_translate(
@@ -544,7 +544,7 @@ def home_page():
     # Footer
     footer_text = cached_translate(
         st.session_state.selected_language,
-        "© 2025 rAlces - Inclusive Education"
+        "© 2025 TAR - Inclusive Education"
     )
     st.markdown(f'<div class="footer">{footer_text}</div>', unsafe_allow_html=True)
 

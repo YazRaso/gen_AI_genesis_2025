@@ -1,5 +1,4 @@
-import os
-from utils import prompt_gemini, make_persistent
+from utils import make_persistent
 from helper import Helper
 from quiz import Quiz
 from concept import Concept
